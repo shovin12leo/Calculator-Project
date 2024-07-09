@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
+  <style>
+    .calculator {
+      display: grid;
+      grid-template-rows: minmax(80px, auto) repeat(5, 60px);
+      grid-template-columns: repeat(4, 60px);
+      justify-content: center;
+      background-color: #2234ae;
+      background-image: linear-gradient(315deg, #2234ae 0%, #191714 74%);
+      padding: 1.4rem;
+      border-radius: 50px;
+      gap: 0.7rem;
+    }
+
+    .calculator button {
+      border: none;
+      font-family: inherit;
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: black; /* Changed color to black */
+      background-color: #fce055;
+      background-image: linear-gradient(319deg, #fce055 0%, #256eff 37%, #46237a 100%);
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .calculator button:hover {
+      background-color: #118ab2;
+      background-image: linear-gradient(319deg, #118ab2 0%, #06d6a0 37%, #ffd166 100%);
+    }
+
+    .span-2 {
+      grid-column: span 2;
+    }
+
+    .calculator > .output {
+      font-size: 2rem;
+      background-color: inherit;
+      color: white;
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: flex-end;
+      word-break: break-all;
+      border-radius: inherit;
+    }
+
+    .output .prev-display {
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: hsl(0, 0%, 65%);
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <div class="output">
+      <div class="prev-display"></div>
+      <div class="curr-display"></div>
+    </div>
+    <button class="span-2 clear">AC</button>
+    <button class="delete">DEL</button>
+    <button class="operation">/</button>
+    <button class="number">1</button>
+    <button class="number">2</button>
+    <button class="number">3</button>
+    <button class="operation">+</button>
+    <button class="number">4</button>
+    <button class="number">5</button>
+    <button class="number">6</button>
+    <button class="operation">-</button>
+    <button class="number">7</button>
+    <button class="number">8</button>
+    <button class="number">9</button>
+    <button class="operation">*</button>
+    <button class="number">.</button>
+    <button class="number">0</button>
+    <button class="span-2 equal">=</button>
+  </div>
+
+  <script>
+    const currDisplay = document.querySelector(".curr-display");
+    const prevDisplay = document.querySelector(".prev-display");
+    const numbers = document.querySelectorAll(".number");
+    const operations = document.querySelectorAll(".operation");
+    const clearBtn = document.querySelector(".clear");
+    const delBtn = document.querySelector(".delete");
+    const equalBtn = document.querySelector(".equal");
+    let operation = null;
+
+    function appendNumber(number) {
+      if (number === "." && currDisplay.innerText.includes(".")) return;
+      currDisplay.innerText += number;
+    }
+
+    function chooseOperation(operand) {
+      if (currDisplay.innerText === "") return;
+      if (prevDisplay.innerText !== "") {
+        compute();
+      }
+      operation = operand;
+      prevDisplay.innerText = currDisplay.innerText + " " + operand;
+      currDisplay.innerText = "";
+    }
+
+    function clearDisplay() {
+      currDisplay.innerText = "";
+      prevDisplay.innerText = "";
+      operation = null;
+    }
+
+    function compute() {
+      let result;
+      const previousValue = parseFloat(prevDisplay.innerText);
+      const currentValue = parseFloat(currDisplay.innerText);
+      
+      if (isNaN(previousValue) || isNaN(currentValue)) return;
+      
+      switch (operation) {
+        case "+":
+          result = previousValue + currentValue;
+          break;
+        case "-":
+          result = previousValue - currentValue;
+          break;
+        case "*":
+          result = previousValue * currentValue;
+          break;
+        case "/":
+          result = previousValue / currentValue;
+          break;
+        default:
+          return;
+      }
+      currDisplay.innerText = result;
+      operation = null;
+      prevDisplay.innerText = "";
+    }
+
+    numbers.forEach(number => {
+      number.addEventListener("click", () => {
+        appendNumber(number.innerText);
+      });
+    });
+
+    operations.forEach(operand => {
+      operand.addEventListener("click", () => {
+        chooseOperation(operand.innerText);
+      });
+    });
+
+    clearBtn.addEventListener("click", () => {
+      clearDisplay();
+    });
+
+    equalBtn.addEventListener("click", () => {
+      compute();
+    });
+
+    delBtn.addEventListener("click", () => {
+      currDisplay.innerText = currDisplay.innerText.slice(0, -1);
+    });
+  </script>
+</body>
+</html>
